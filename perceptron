@@ -1,0 +1,59 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.datasets import make_classification,make_blobs
+from sklearn.datasets import make_circles
+
+class Perceptron:   
+	def fit(self, X, y, n_iter=100):
+		n_samples = X.shape[0]
+		n_features = X.shape[1]
+		self.weights = np.zeros((n_features+1,))
+		X = np.concatenate([X, np.ones((n_samples, 1))], axis=1)
+		for i in range(n_iter):
+			for j in range(n_samples):
+				if y[j]*np.dot(self.weights, X[j, :]) <= 0:
+					 self.weights += y[j]*X[j, :]
+	def predict(self, X):
+		if not hasattr(self, 'weights'):
+			print('The model is not trained yet!')
+			return
+		n_samples = X.shape[0]
+		X = np.concatenate([X, np.ones((n_samples, 1))], axis=1)
+		y = np.matmul(X, self.weights)
+		y = np.vectorize(lambda val: 1 if val > 0 else -1)(y)
+
+		return y
+	def score(self, X, y):
+		pred_y = self.predict(X)
+		return np.mean(y == pred_y)
+
+X, y = make_blobs(
+    n_samples=200,
+    centers=2,
+    n_features=2,
+    center_box=(0,5)
+)
+X_train=X[0:149,:]
+X_test=X[150:199,:]
+#print(X)
+filter_arr=[]
+for element in y:
+	if element==1:
+		filter_arr.append('blue')
+	else:
+		filter_arr.append('red')
+for i in range(X.shape[0]):
+	plt.scatter(X[i][0],X[i][1],c=filter_arr[i],s=10,linewidth=0)
+for i in range(len(y)):
+	if y[i]==0:
+		y[i]=-1
+y_train=y[0:149]
+y_test=y[150:199]
+k=Perceptron()
+k.fit(X_train,y_train)
+#print(k.weights)
+a=[-k.weights[2]/k.weights[0],0]
+b=[0,-k.weights[2]/k.weights[1]]
+plt.plot(a,b)
+plt.show()
+print(k.score(X_test,y_test))
