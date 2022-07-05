@@ -47,13 +47,3 @@ for i in range(X.shape[0]):
 for i in range(len(y)):
 	if y[i]==0:
 		y[i]=-1
-y_train=y[0:149]
-y_test=y[150:199]
-k=Perceptron()
-k.fit(X_train,y_train)
-#print(k.weights)
-a=[-k.weights[2]/k.weights[0],0]
-b=[0,-k.weights[2]/k.weights[1]]
-plt.plot(a,b)
-plt.show()
-print(k.score(X_test,y_test))
